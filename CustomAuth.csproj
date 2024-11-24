@@ -10,10 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\css\Chat.jpeg" />
+    <None Include="wwwroot\css\Incident Report.jpeg" />
+    <None Include="wwwroot\css\Incident Report2.jpeg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.13.0" />
     <PackageReference Include="Azure.ResourceManager.Sql" Version="1.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="8.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.28.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">

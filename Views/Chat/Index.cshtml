@@ -1,0 +1,289 @@
+﻿@model CustomAuth.Models.ChatViewModel
+@{
+    ViewData["Title"] = "Chat Interface";
+}
+
+<style>
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    .header {
+        background-color: #075e54;
+        color: white;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .main-content {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .contacts-panel {
+        width: 30%;
+        border-right: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .search-box {
+        padding: 10px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .contacts-list {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .contact-item {
+        padding: 10px;
+        cursor: pointer;
+    }
+
+        .contact-item:hover {
+            background-color: #f0f0f0;
+        }
+
+    .chat-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-header {
+        padding: 10px;
+        background-color: #ededed;
+        font-weight: bold;
+    }
+
+    .message-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+    }
+
+    .message {
+        margin-bottom: 10px;
+        max-width: 70%;
+    }
+
+    .message-content {
+        padding: 8px;
+        border-radius: 8px;
+    }
+
+    .message-time {
+        font-size: 0.8em;
+        color: #999;
+        margin-top: 2px;
+    }
+
+    .sent {
+        align-self: flex-end;
+        text-align: right;
+    }
+
+        .sent .message-content {
+            background-color: #dcf8c6;
+        }
+
+    .received {
+        align-self: flex-start;
+    }
+
+        .received .message-content {
+            background-color: #fff;
+        }
+
+    .message-input {
+        display: flex;
+        padding: 10px;
+        background-color: #f0f0f0;
+    }
+
+    .message-box {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 20px;
+        margin-right: 10px;
+    }
+
+    .send-button {
+        background-color: #075e54;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="chat-container">
+    <div class="header">
+        <div style="width: 33.333%;"></div>
+        <div id="onlineUsersCount">Online Users: <span>0</span></div>
+        <div style="width: 33.333%; text-align: right;">
+            <span>@Model.CurrentUser</span>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="contacts-panel">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search contacts" class="search-input" />
+            </div>
+            <div id="contactsList" class="contacts-list">
+                @foreach (var contact in Model.Contacts)
+                {
+                    <div class="contact-item" data-contact="@contact">
+                        <div>@contact</div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="chat-panel">
+            <div class="chat-header">
+                <div id="selectedContact">@Model.Contacts.FirstOrDefault()</div>
+            </div>
+            <div id="messageArea" class="message-area">
+                @* Messages will be loaded here dynamically *@
+            </div>
+            <div class="message-input">
+                <input type="text" id="newMessage" placeholder="Type a message" class="message-box" />
+                <button id="sendMessage" class="send-button">
+                    Send
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.11/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        async function start() {
+            try {
+                await connection.start();
+                console.log("SignalR Connected.");
+                document.getElementById("messageArea").innerHTML = "sup";
+                await connection.invoke("SetUsername", "@Model.CurrentUser");
+                loadMessages();
+            } catch (err) {
+                console.log(err.toString());
+                setTimeout(start, 5000);
+            }
+        };
+
+        connection.onclose(async () => {
+            console.log("SignalR Disconnected. Attempting to reconnect...");
+            await start();
+        });
+
+        // Start the connection.
+        start();
+
+        connection.on("ReceiveMessage", function (message) {
+            const currentUser = "@Model.CurrentUser";
+            const selectedContact = document.getElementById("selectedContact").textContent;
+            if ((message.from === currentUser && message.to === selectedContact) ||
+                (message.from === selectedContact && message.to === currentUser)) {
+                appendMessage(message);
+            }
+        });
+
+        connection.on("UpdateOnlineUsers", function (count) {
+            console.log("Updating online users count: ", count);
+            document.querySelector('#onlineUsersCount span').textContent = count.toString();
+        });
+
+            
+        function loadMessages() {
+            const selectedContact = document.getElementById("selectedContact").textContent;
+            fetch('/Chat/GetMessages?to=' + selectedContact)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(messages => {
+                    console.log("Loaded messages: ", messages);
+                    document.getElementById('messageArea').innerHTML = '';
+                    messages.forEach(appendMessage);
+                })
+                .catch(error => {
+                    console.error('Error loading messages:', error);
+                    document.getElementById('messageArea').innerHTML = '<p>Error loading messages. Please try again later.</p>';
+                });
+        }
+
+        function appendMessage(message) {
+            const currentUser = "@Model.CurrentUser";
+            const isCurrentUser = message.from === currentUser;
+            const messageClass = isCurrentUser ? 'sent' : 'received';
+            const messageHtml = `
+                        <div class="message ${messageClass}">
+                            <div class="message-content">
+                                ${message.message}
+                            </div>
+                        </div>
+                    `;
+            document.getElementById('messageArea').insertAdjacentHTML('beforeend', messageHtml);
+            document.getElementById('messageArea').scrollTop = document.getElementById('messageArea').scrollHeight;
+        }
+
+        document.getElementById('contactsList').addEventListener('click', function (e) {
+            if (e.target.closest('.contact-item')) {
+                const selectedContact = e.target.closest('.contact-item').dataset.contact;
+                document.getElementById('selectedContact').textContent = selectedContact;
+                loadMessages();
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const searchQuery = this.value.toLowerCase();
+            document.querySelectorAll('.contact-item').forEach(function (item) {
+                const contact = item.textContent.toLowerCase();
+                item.style.display = contact.includes(searchQuery) ? '' : 'none';
+            });
+        });
+
+        document.getElementById('sendMessage').addEventListener('click', sendMessage);
+
+        document.getElementById('newMessage').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+                e.preventDefault();
+            }
+        });
+
+        async function sendMessage() {
+            const message = document.getElementById('newMessage').value;
+            const selectedContact = document.getElementById('selectedContact').textContent;
+            if (message.trim()) {
+                try {
+                    await connection.invoke("SendMessage", selectedContact, message);
+                    document.getElementById('newMessage').value = '';
+                } catch (err) {
+                    console.error('Error sending message:', err);
+                }
+            }
+        }
+    </script>

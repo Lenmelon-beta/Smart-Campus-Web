@@ -1,8 +1,54 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
+<div class="align-content-lg-start">
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <p>
+        Our campus has embarked on a journey to become a pioneer in smart campus development. Recognizing the
+        potential of 4IR technologies to revolutionize campus life, the administration has initiated a project to develop
+        a comprehensive web application that addresses key aspects of campus operations and student interactions. If you what to view an online version click on this link <a href="https://ctusmartwebapp-btfxhsa7dna3hsfc.canadacentral-01.azurewebsites.net/">built on azure web app</a>.
+    </p>
+</div>
+</div>
+<div class=" justify-content-center align-items-center">
+<section>
+<div class="container">
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <!--Add examples of Incident Reports-->
+                <img src="~/css/Incident Report.jpeg" class="card-img-top" alt="Send Incident Reports">
+                <div class="card-body">
+                    <h5 class="card-title">Send Incident Reports</h5>
+                    <p class="card-text">Easily submit incident reports through our user-friendly form. Your feedback helps us improve.</p>
+                    <a asp-controller="IncidentReports" asp-action="Submit" class="btn btn-primary">Submit Report</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <!--Add examples of Incident Reports-->
+                <img src="~/css/Incident Report2.jpeg" class="card-img-top" alt="Read Incident Reports">
+                <div class="card-body">
+                    <h5 class="card-title">Read Incident Reports</h5>
+                    <p class="card-text">Log in to view all submitted incident reports and stay informed.</p>
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="Login">View Reports</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <!--Add examples of chat image-->
+                <img src="~/css/Chat.jpeg" class="card-img-top" alt="Chat with Users">
+                <div class="card-body">
+                    <h5 class="card-title">Chat with Other Users</h5>
+                    <p class="card-text">Connect with other users in real-time through our chat feature. Please log in to start chatting!</p>
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Join Chat</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
 </div>

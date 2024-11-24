@@ -1,0 +1,5 @@
+Liam Lloyd: Login Page
+Matthew Meyer: SignalR Chat Page
+Ryan Weitz: SOS Page
+Daundry van Staden: Documentation
+Lisa Cuddumbey: Frontend

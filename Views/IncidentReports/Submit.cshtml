@@ -1,23 +1,37 @@
 ﻿@model CustomAuth.Models.IncidentReport
 
-<h2>Submit Incident</h2>
+<style>
+    body {
+        background-color: rgb(141, 180, 222);
+    }
 
-<form asp-action="Submit" method="post">
-    <div class="form-group">
-        <label for="SubmittedBy">Username</label>
-        <input type="text" class="form-control" id="SubmittedBy" name="SubmittedBy" required />
+    .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+</style>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card" style="width: 600px; padding: 30px;" style="background-color:aliceblue;">
+        <h2 class="text-center">Submit Incident</h2>
+        <form asp-action="Submit" method="post">
+            <div class="form-group">
+                <label for="SubmittedBy">Username</label>
+                <input type="text" class="form-control" id="SubmittedBy" name="SubmittedBy" required />
+            </div>
+            <div class="form-group">
+                <label for="Email">Email</label>
+                <input type="email" class="form-control" id="Email" name="Email" required />
+            </div>
+            <div class="form-group">
+                <label for="Title">Incident Title</label>
+                <input type="text" class="form-control" id="Title" name="Title" required />
+            </div>
+            <div class="form-group">
+                <label for="Description">Incident Description</label>
+                <textarea class="form-control" id="Description" name="Description" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+        </form>
     </div>
-    <div class="form-group">
-        <label for="Email">Email</label>
-        <input type="email" class="form-control" id="Email" name="Email" required />
-    </div>
-    <div class="form-group">
-        <label for="Title">Incident Title</label>
-        <input type="text" class="form-control" id="Title" name="Title" required />
-    </div>
-    <div class="form-group">
-        <label for="Description">Incident Description</label>
-        <textarea class="form-control" id="Description" name="Description" required></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+</div>
