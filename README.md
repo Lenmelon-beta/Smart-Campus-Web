@@ -7,4 +7,8 @@ to the database.
 
 
 # Post-creation notes
-if anyone wants to use this, they'll need to contact liam as he needs to start up the database for it to run the chat page
+if anyone wants to use this, they'll need to contact liam as he needs to start up the database for it to run the chat page (if he hasnt changed anything without tell us).
+
+
+# Account notes (Matthew Meyer)
+This is a group project for Work Integrated Learning. My part was the signalR chat page. I based the design off of whatsapp. The system determines who gets what by storing who its to and from (along with the actual message and an idex of course) and distributes the messages accordingly. If its from someone to you, it will appears on right side, but when it's from you to someone, it will appear on the left side (just like whatsapp). The chatpage also includes a user search feature and a realt-time active users count.
